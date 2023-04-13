@@ -1,0 +1,226 @@
+with open('Pokemon.csv') as data: # Open the Pokemon spreadsheet, and close it automatically after use
+    pokemon = data.readlines()[1:] # Read and store all the lines except the header
+    header = "No  Name" + " "*26 + "Type 1    Type 2    Total  HP     Attack    Defense   Sp. Atk   Sp. Def   Speed     Generation   Legendary" # Store the header
+
+def to_array(string):
+    
+    """
+    Arguments: string -- a line of Pokemon data
+    Returns: a list of Pokemon data
+    """
+    
+    return string.split(",")
+
+def to_sentence(array):
+    
+    """
+    Arguments: array -- a list of Pokemon data
+    Returns: a string of Pokemon data
+    """
+    
+    string = array[0] + (len("No  ") - len(array[0]))*" "
+    string += array[1] + (len("Name" + " "*26) - len(array[1]))*" "
+    string += array[2] + (len("Type 1    ") - len(array[2]))*" "
+    string += array[3] + (len("Type 2    ") - len(array[3]))*" "
+    string += array[4] + (len("Total  ") - len(array[4]))*" "
+    string += array[5] + (len("HP     ") - len(array[5]))*" "
+    string += array[6] + (len("Attack    ") - len(array[6]))*" "
+    string += array[7] + (len("Defense   ") - len(array[7]))*" "
+    string += array[8] + (len("Sp. Atk   ") - len(array[8]))*" "
+    string += array[9] + (len("Sp. Def   ") - len(array[9]))*" "
+    string += array[10] + (len("Speed     ") - len(array[10]))*" "
+    string += array[11] + (len("Generation   ") - len(array[11]))*" "
+    string += array[12]
+    
+    return string.strip("\n") # Removes "\n" escape character so that the formating does not get affected later on
+
+def menu():
+    
+    """
+    Arguments: no arguments
+    Returns: nothing; displays all options
+    """
+    
+    print("""
+Pokemon Super Search Engine
+1. Display Pokemon with their types and statistics
+2. Display the first Pokemon of a Type of your choice
+3. Display all Pokemons with Total Base stat of your choice
+4. Display all Pokemons with a minimum set of stats
+5. Display all lengendary Pokemons of specific Type1 and Type2
+6. surprise me!
+0. Quit
+    """)
+    
+def close():
+    
+    """
+    Arguments: no arguments
+    Returns: nothing; sets the global variable leave to True
+    """
+    
+    global leave
+    leave = True
+    
+def option_one():
+
+    """
+    Arguments: no arguments
+    Returns: nothing; displays the selected number of Pokemons with their types and statistics
+    """
+    
+    number = input("Enter number of Pokemons to be displayed: ")
+    while number.isdigit() == False or int(number) < 0 or int(number) > 800: # Validation of input
+        number = input("Number of Pokemons to be displayed must be a number between 0 and 800: ")
+    print(header)
+    for i in range(int(number)):
+        print(to_sentence(to_array(pokemon[i])))
+        
+def option_two():
+
+    """
+    Arguments: no arguments
+    Returns: nothing; displays the first Pokemon of a Type of the trainer’s choice
+    """
+    
+    check = False
+    types = input("Enter Type: ").lower()
+    while types.isalpha() == False: # Validation of input
+        types = input("Type must be a word: ").lower()
+    print(header)
+    for i in range(len(pokemon)):
+        if to_array(pokemon[i])[2].lower() == types or to_array(pokemon[i])[3].lower() == types: # Checks for the condition "Type"
+            print(to_sentence(to_array(pokemon[i])))
+            check = True
+            break # Stops the for loop once a pokemon has been printed
+    if check == False: # Occurs if no pokemon was printed
+        print("No pokemon of this type.\n")
+
+def option_three():
+
+    """
+    Arguments: no arguments
+    Returns: nothing; displays all Pokemons with Total Base stat of the trainer’s choice
+    """
+    
+    check = False
+    baseStat = input("Enter Total Base stat: ")
+    while baseStat.isdigit() == False or int(baseStat) < 0: # Validation of input
+        baseStat = input("Total Base stat cannot be negative and must be a number: ")
+    print(header)
+    for i in range(len(pokemon)):
+        if int(to_array(pokemon[i])[4]) == int(baseStat): # Checks for the condition "Total Base Stat"
+            print(to_sentence(to_array(pokemon[i])))
+            check = True
+    if check == False: # Occurs if no pokemon was printed
+        print("No pokemon with this Total Base stat.\n")
+        
+def option_four():
+
+    """
+    Arguments: no arguments
+    Returns: nothing; displays all Pokemons with a minimum set of stats
+    """
+    
+    check = False
+    specialAttack = input("Enter min special attack stat: ")
+    while specialAttack.isdigit() == False or int(specialAttack) < 0: # Validation of input
+        specialAttack = input("Special attack stat cannot be negative and must be a number: ")
+    specialDefense = input("Enter min special defense stat: ")
+    while specialDefense.isdigit() == False or int(specialDefense) < 0: # Validation of input
+        specialDefense = input("Special defense stat cannot be negative and must be a number: ")
+    speedStat = input("Enter min speed stat: ")
+    while speedStat.isdigit() == False or int(speedStat) < 0: # Validation of input
+        speedStat = input("Speed stat cannot be negative and must be a number: ")
+    print(header)
+    for i in range(len(pokemon)):
+        # Checks for the conditions "Special Attack Stat", "Special Defense Stat" and "Min Speed Stat"
+        if int(to_array(pokemon[i])[8]) >= int(specialAttack) and int(to_array(pokemon[i])[9]) >= int(specialDefense) and int(to_array(pokemon[i])[10]) >= int(speedStat):
+            print(to_sentence(to_array(pokemon[i])))
+            check = True
+    if check == False: # Occurs if no pokemon was printed
+        print("No pokemon has such powerful stats\n")
+        
+def option_five():
+
+    """
+    Arguments: no arguments
+    Returns: nothing; displays all legendary Pokemons of Types of the trainer’s choice
+    """
+    
+    check = False
+    typeOne = input("Enter Type1: ").lower()
+    while typeOne.isalpha() == False: # Validation of input
+        typeOne = input("Type1 must be a word: ").lower()
+    typeTwo = input("Enter Type2: ").lower()
+    while typeTwo.isalpha() == False: # Validation of input
+        typeTwo = input("Type2 must be a word: ").lower()
+    print(header)
+    for i in range(len(pokemon)):
+        if to_array(pokemon[i])[3] == "" and (typeTwo == "" or typeTwo.isspace()): # Checks whether the condition "Type2" is non-existent
+            if to_array(pokemon[i])[2].lower() == typeOne.lower() and "true" in to_array(pokemon[i])[-1].lower(): # Checks for the condition "Type1" and "Legendary"
+                print(to_sentence(to_array(pokemon[i])))
+                check = True
+        else: # Occurs if the condition "Type2" is existent
+            # Checks for the condition "Type1", "Type2" and "Legendary"
+            if to_array(pokemon[i])[2].lower() == typeOne.lower() and to_array(pokemon[i])[3].lower() == typeTwo and "true" in to_array(pokemon[i])[-1].lower(): 
+                print(to_sentence(to_array(pokemon[i])))
+                check = True
+    if check == False: # Occurs if no pokemon was printed
+        print("No such legendary Pokemon.\n")
+            
+def option_six():
+
+    """
+    Arguments: no arguments
+    Returns: nothing; prints the ASCII Art of Charmander
+    """
+
+    print("""
+                                            ⠀⠀⠀⠀⠀⠀⣀⠤⠄⠒⠒⠤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⠀⠀⡰⠊⠁⠀⠀⠀⠀⠀⠀⠙⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⠀⣸⢡⡄⠀⠀⠀⠀⢀⡴⢠⢦⡈⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⠀⣿⢋⠃⠀⠀⠀⠀⠀⠁⣧⣸⣧⠸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⠠⡿⢿⠀⠀⠀⠀⠀⠀⠀⣟⠛⣹⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⢠⡟⠚⠀⠀⠀⠀⠀⠀⠀⠈⠉⢀⡀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣄⡀⠀⠀
+                                        ⠀⠀⢸⡙⢶⣤⣄⣀⣀⣀⣤⡤⠲⡿⠁⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣼⠿⣿⡀⠀
+                                        ⠀⠀⠀⠙⠢⣍⡓⢤⣴⣋⣉⡭⠛⠀⢠⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡿⠿⠀⠀⡇⠀
+                                        ⠀⠀⠀⠀⠀⣀⡬⢿⠃⣻⡶⣆⡀⠀⠈⠉⠒⠦⢄⡀⠀⠀⠀⠀⠀⠀⣠⠇⠀⠀⠀⣷⠀
+                                        ⣴⣶⠶⠒⠉⠀⠀⢸⠞⠁⠀⠀⠙⢆⠀⠀⠀⠀⠀⠈⠉⠚⣿⡶⠀⢰⠃⠀⠀⠀⢠⣿⣄
+                                        ⠉⢻⣄⣀⡀⠀⢀⡾⠀⠀⠀⠀⠀⠈⢧⣀⣀⠀⠀⠀⣿⡧⠾⠗⠀⠀⢧⡀⠀⠀⠀⣡⠇
+                                        ⠀⠉⠁⠀⠀⠀⢠⡇⠀⠀⠀⠀⠀⠀⠈⡆⠀⠙⣆⠀⠀⠀⠀⠀⠀⠀⠀⠳⣤⣀⠞⠁⠀
+                                        ⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⢸⡀⠀⠈⢧⠀⠀⠀⠀⠀⠀⠀⡰⠃⡄⠀⠀⠀
+                                        ⠀⠀⠀⠀⢀⡠⠚⡇⠀⠀⠀⠀⠀⠀⠀⢠⠟⠀⠀⠀⢳⡀⠀⠀⠀⣠⠞⠁⣠⡇⠀⠀⠀
+                                        ⠀⠀⠀⢀⠎⠀⠀⠙⣄⠀⠀⠀⠀⠀⠀⡏⠀⠀⠀⠀⠀⢳⠒⠈⠉⠀⢀⣴⡟⠀⠀⠀⠀
+                                        ⠀⠀⠀⢸⠀⠀⠀⠀⠈⠣⢄⡀⠀⠀⠀⢇⠀⠀⠀⠀⠀⢸⡀⣀⡠⠔⡩⠞⠀⠀⠀⠀⠀
+                                        ⠀⠀⠀⣈⣧⡀⠀⠀⠀⢠⠔⠛⠓⠒⠒⠚⠧⡀⠀⠀⠀⠈⡯⠄⠒⠉⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⣾⣟⣶⣳⠤⠤⠔⠊⠀⠀⠀⠀⠀⠀⠀⢹⡀⢀⣀⣀⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                        ⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢚⣾⣷⣟⡋⠀⠀⠀
+
+Click on this link to generate another pokemon: https://sites.google.com/vjc.edu.sg/a-very-interesting-button-hmmm/home
+    """)
+
+leave = False
+
+while leave == False: # iterates until user chooses option 0
+    
+    menu()
+    option = int(input("Enter option: "))
+    print("") # Empty line for formatting
+    
+    if option == 1:
+        option_one()
+    elif option == 2:
+        option_two()
+    elif option == 3:
+        option_three()
+    elif option == 4:
+        option_four()
+    elif option == 5:
+        option_five()
+    elif option == 6:
+        option_six()
+    elif option == 0:
+        close()
+    else: # Occurs when the user does not enter a value between 0 and 6
+        print("Not implemented yet? Please choose a valid option.\n")
